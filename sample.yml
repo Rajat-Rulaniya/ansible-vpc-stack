@@ -1,0 +1,19 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Create a sample EC2 key pair
+      amazon.aws.ec2_key:
+        name: sample_key
+        region: us-east-1
+      register: keyout
+      
+
+    - name: Save key pair
+      copy:
+        content: "{{ keyout.key.private_key }}"
+        dest: "/home/ubuntu/vpc-stack-vpro/keys/sample-key.pem"
+      when: keyout.changed
+      register: test
