@@ -1,0 +1,4 @@
+bastion_ami: "ami-084568db4383264d4"
+region: us-east-1
+
+MYIP: "{{ lookup("file", "myIp.txt") }}"
