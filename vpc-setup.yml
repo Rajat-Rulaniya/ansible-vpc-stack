@@ -13,7 +13,7 @@
         region: "{{ region }}"
         dns_support: yes
         dns_hostnames: yes
-        tenacy: default
+        tenancy: default
         state: "{{ state }}"
       register: vpcout
 
