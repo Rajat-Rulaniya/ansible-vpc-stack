@@ -25,8 +25,11 @@
         az: '{{ zone1 }}'
         region: "{{ region }}"
         map_public: true
+
         resource_tags:
           Name: vpro-PublicSub1
+
+      register: pubSub1out
         
 
     - name: Create Public Subnet 2 in Zone 2
@@ -37,8 +40,11 @@
         az: '{{ zone2 }}'
         region: "{{ region }}"
         map_public: true
+
         resource_tags:
           Name: vpro-PublicSub2
+
+      register: pubSub2out
 
     - name: Create Public Subnet 3 in Zone 3
       amazon.aws.ec2_vpc_subnet:
@@ -48,8 +54,11 @@
         az: '{{ zone3 }}'
         region: "{{ region }}"
         map_public: true
+
         resource_tags:
           Name: vpro-PublicSub3
+
+      register: pubSub3out
 
     - name: Create Private Subnet 1 in Zone 1
       amazon.aws.ec2_vpc_subnet:
@@ -58,8 +67,11 @@
         cidr: '{{ PrivSub1Cidr }}'
         az: '{{ zone1 }}'
         region: "{{ region }}"
+
         resource_tags:
           Name: vpro-PrivateSub1
+
+      register: privSub1out
         
     - name: Create Private Subnet 2 in Zone 2
       amazon.aws.ec2_vpc_subnet:
@@ -68,8 +80,11 @@
         cidr: '{{ PrivSub2Cidr }}'
         az: '{{ zone2 }}'
         region: "{{ region }}"
+
         resource_tags:
           Name: vpro-PrivateSub2
+
+      register: privSub2out
     
     - name: Create Private Subnet 3 in Zone 3
       amazon.aws.ec2_vpc_subnet:
@@ -78,5 +93,64 @@
         cidr: '{{ PrivSub3Cidr }}'
         az: '{{ zone3 }}'
         region: "{{ region }}"
+
         resource_tags:
           Name: vpro-PrivateSub3
+
+      register: privSub3out
+
+    
+    - name: Create Internet Gateway
+      amazon.aws.ec2_vpc_igw:
+        vpc_id: '{{ vpcout.vpc.id }}'
+        state: '{{ state }}'
+        region: '{{ region }}'
+
+        resource_tags:
+          Name: vpro-IGateWay
+
+      register: igw
+
+    - name: Create Public Route Table
+      amazon.aws.ec2_vpc_route_table:
+        vpc_id: '{{ vpcout.vpc.id }}'
+        state: '{{ state }}'
+        region: '{{ region }}'
+
+        resource_tags:
+          Name: Public-RT
+
+        subnets:
+          - '{{ pubSub1out.subnet.id }}'
+          - '{{ pubSub2out.subnet.id }}'
+          - '{{ pubSub3out.subnet.id }}'
+        
+        routes:
+          - dest: 0.0.0.0/0
+            gateway_id: '{{ igw.gateway.id }}'
+          - dest: ::/0
+            gateway_id: '{{ igw.gateway.id }}'
+
+      register: public_route_table
+
+
+    - name: Create Private Route Table
+      amazon.aws.ec2_vpc_route_table:
+        vpc_id: '{{ vpcout.vpc.id }}'
+        state: '{{ state }}'
+        region: '{{ region }}'
+
+        resource_tags:
+          Name: Private-RT
+
+        subnets:
+          - '{{ privSub1out.subnet.id }}'
+          - '{{ privSub2out.subnet.id }}'
+          - '{{ privSub3out.subnet.id }}'
+        
+        routes:
+          - dest: '{{ vpcCidr }}'
+            gateway_id: 'local'
+
+      register: private_route_table
+
