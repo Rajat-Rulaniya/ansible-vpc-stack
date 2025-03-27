@@ -155,7 +155,7 @@
     - name: Saving important Variables
       lineinfile:
         line: '{{ item.name }}: {{item.value }}'
-        path: './vpc-metadata/id-vars.txt'
+        path: './vars/id-vars.txt'
         regexp: '^{{ item.name }}:'
       loop: 
         - name: vpcID
