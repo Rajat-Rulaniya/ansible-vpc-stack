@@ -124,6 +124,7 @@
         region: '{{ region }}'
         subnet_id: '{{ pubSub1out.subnet.id }}'
         if_exist_do_not_create: true
+        wait: yes ## This is necessary otherwise our routeTable will fail to fetch NAT id during creation.
         resource_tags:
           Name: NAT-gw-pubSub1
       register: nat_gw_pubSub1
