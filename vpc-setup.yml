@@ -75,7 +75,7 @@
       amazon.aws.ec2_vpc_subnet:
         state: "{{ state }}"
         vpc_id: '{{ vpcout.vpc.id }}'
-        cidr: '{{ PrivSub1Cidr }}'
+        cidr: '{{ PrivSub3Cidr }}'
         az: '{{ zone3 }}'
         region: "{{ region }}"
         resource_tags:
