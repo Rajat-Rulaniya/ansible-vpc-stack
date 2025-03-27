@@ -122,7 +122,7 @@
       amazon.aws.ec2_vpc_nat_gateway:
         state: '{{ state }}'
         region: '{{ region }}'
-        subenet_id: '{{ pubSub1out.subnet.id }}'
+        subnet_id: '{{ pubSub1out.subnet.id }}'
         if_exists_do_not_create: true
         resource_tags:
           Name: NAT-gw-pubSub1
