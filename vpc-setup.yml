@@ -127,9 +127,9 @@
         
         routes:
           - dest: 0.0.0.0/0
-            gateway_id: '{{ igw.gateway.id }}'
+            gateway_id: '{{ igw.gateway_id }}'
           - dest: ::/0
-            gateway_id: '{{ igw.gateway.id }}'
+            gateway_id: '{{ igw.gateway_id }}'
 
       register: public_route_table
 
