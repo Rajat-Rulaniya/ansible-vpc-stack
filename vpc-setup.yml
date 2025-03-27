@@ -157,6 +157,7 @@
         line: '{{ item.name }}: {{item.value }}'
         path: './vars/id-vars.txt'
         regexp: '^{{ item.name }}:'
+        create: true
       loop: 
         - name: vpcID
           value: '{{vpcout.vpc.id}}'
