@@ -1,0 +1,18 @@
+- name: Setup Bastion Host
+  hosts: localhost
+  connection: local 
+  gather_facts: False
+
+  tasks:
+    - name: Import Bastion variables
+      include_vars: 
+        file: vars/vpc_setup.txt
+        name: bastion_vars
+
+    - debug:
+        msg: 
+      loop: '{{ lookup("dict", bastion_vars) }}'
+
+    - debug:
+        msg: '{{ region }}'
+        
