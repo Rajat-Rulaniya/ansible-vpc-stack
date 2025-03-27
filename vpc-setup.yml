@@ -123,7 +123,7 @@
         state: '{{ state }}'
         region: '{{ region }}'
         subnet_id: '{{ pubSub1out.subnet.id }}'
-        if_exists_do_not_create: true
+        if_exist_do_not_create: true
         resource_tags:
           Name: NAT-gw-pubSub1
       register: nat_gw_pubSub1
