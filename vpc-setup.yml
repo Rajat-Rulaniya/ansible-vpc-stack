@@ -25,10 +25,8 @@
         az: '{{ zone1 }}'
         region: "{{ region }}"
         map_public: true
-
         resource_tags:
           Name: vpro-PublicSub1
-
       register: pubSub1out
         
 
@@ -40,10 +38,8 @@
         az: '{{ zone2 }}'
         region: "{{ region }}"
         map_public: true
-
         resource_tags:
           Name: vpro-PublicSub2
-
       register: pubSub2out
 
     - name: Create Public Subnet 3 in Zone 3
@@ -54,10 +50,8 @@
         az: '{{ zone3 }}'
         region: "{{ region }}"
         map_public: true
-
         resource_tags:
           Name: vpro-PublicSub3
-
       register: pubSub3out
 
     - name: Create Private Subnet 1 in Zone 1
@@ -67,10 +61,8 @@
         cidr: '{{ PrivSub1Cidr }}'
         az: '{{ zone1 }}'
         region: "{{ region }}"
-
         resource_tags:
           Name: vpro-PrivateSub1
-
       register: privSub1out
         
     - name: Create Private Subnet 2 in Zone 2
@@ -80,10 +72,8 @@
         cidr: '{{ PrivSub2Cidr }}'
         az: '{{ zone2 }}'
         region: "{{ region }}"
-
         resource_tags:
           Name: vpro-PrivateSub2
-
       register: privSub2out
     
     - name: Create Private Subnet 3 in Zone 3
@@ -93,10 +83,8 @@
         cidr: '{{ PrivSub3Cidr }}'
         az: '{{ zone3 }}'
         region: "{{ region }}"
-
         resource_tags:
           Name: vpro-PrivateSub3
-
       register: privSub3out
 
     
@@ -105,10 +93,8 @@
         vpc_id: '{{ vpcout.vpc.id }}'
         state: '{{ state }}'
         region: '{{ region }}'
-
         resource_tags:
           Name: vpro-IGateWay
-
       register: igw
 
     - name: Create Public Route Table
@@ -124,14 +110,23 @@
           - '{{ pubSub1out.subnet.id }}'
           - '{{ pubSub2out.subnet.id }}'
           - '{{ pubSub3out.subnet.id }}'
-        
+
         routes:
           - dest: 0.0.0.0/0
             gateway_id: '{{ igw.gateway_id }}'
           - dest: ::/0
             gateway_id: '{{ igw.gateway_id }}'
-
       register: public_route_table
+
+    - name: Create NAT Gateway in Public Subnet 1
+      amazon.aws.ec2_vpc_nat_gateway:
+        state: '{{ state }}'
+        region: '{{ region }}'
+        subenet_id: '{{ pubSub1out.subnet.id }}'
+        if_exists_do_not_create: true
+        resource_tags:
+          Name: NAT-gw-pubSub1
+      register: nat_gw_pubSub1
 
 
     - name: Create Private Route Table
@@ -151,6 +146,8 @@
         routes:
           - dest: '{{ vpcCidr }}'
             gateway_id: 'local'
+          - dest: '0.0.0.0/0'
+            gateway_id: '{{ nat_gw_pubSub1.nat_gateway_id }}'
 
       register: private_route_table
 
