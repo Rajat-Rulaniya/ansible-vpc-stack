@@ -17,4 +17,66 @@
         state: "{{ state }}"
       register: vpcout
 
-      
+    - name: Create Public Subnet 1 in Zone 1
+      amazon.aws.ec2_vpc_subnet:
+        state: "{{ state }}"
+        vpc_id: '{{ vpcout.vpc.id }}'
+        cidr: '{{ PubSub1Cidr }}'
+        az: '{{ zone1 }}'
+        region: "{{ region }}"
+        map_public: true
+        resource_tags:
+          Name: vpro-PublicSub1
+        
+
+    - name: Create Public Subnet 2 in Zone 2
+      amazon.aws.ec2_vpc_subnet:
+        state: "{{ state }}"
+        vpc_id: '{{ vpcout.vpc.id }}'
+        cidr: '{{ PubSub2Cidr }}'
+        az: '{{ zone2 }}'
+        region: "{{ region }}"
+        map_public: true
+        resource_tags:
+          Name: vpro-PublicSub2
+
+    - name: Create Public Subnet 3 in Zone 3
+      amazon.aws.ec2_vpc_subnet:
+        state: "{{ state }}"
+        vpc_id: '{{ vpcout.vpc.id }}'
+        cidr: '{{ PubSub3Cidr }}'
+        az: '{{ zone3 }}'
+        region: "{{ region }}"
+        map_public: true
+        resource_tags:
+          Name: vpro-PublicSub3
+
+    - name: Create Private Subnet 1 in Zone 1
+      amazon.aws.ec2_vpc_subnet:
+        state: "{{ state }}"
+        vpc_id: '{{ vpcout.vpc.id }}'
+        cidr: '{{ PrivSub1Cidr }}'
+        az: '{{ zone1 }}'
+        region: "{{ region }}"
+        resource_tags:
+          Name: vpro-PrivateSub1
+        
+    - name: Create Private Subnet 2 in Zone 2
+      amazon.aws.ec2_vpc_subnet:
+        state: "{{ state }}"
+        vpc_id: '{{ vpcout.vpc.id }}'
+        cidr: '{{ PrivSub2Cidr }}'
+        az: '{{ zone2 }}'
+        region: "{{ region }}"
+        resource_tags:
+          Name: vpro-PrivateSub2
+    
+    - name: Create Private Subnet 3 in Zone 3
+      amazon.aws.ec2_vpc_subnet:
+        state: "{{ state }}"
+        vpc_id: '{{ vpcout.vpc.id }}'
+        cidr: '{{ PrivSub1Cidr }}'
+        az: '{{ zone3 }}'
+        region: "{{ region }}"
+        resource_tags:
+          Name: vpro-PrivateSub3
