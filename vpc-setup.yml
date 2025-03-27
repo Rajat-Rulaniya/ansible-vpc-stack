@@ -152,3 +152,33 @@
 
       register: private_route_table
 
+    - name: Saving important Variables
+      lineinfile:
+        line: '{{ item.name }}: {{item.value }}'
+        path: './vpc-metadata/id-vars.txt'
+        regexp: '^{{ item.name }}:'
+      loop: 
+        - name: vpcID
+          value: vpcout.vpc.id
+        - name: pubSub1ID
+          value: pubSub1out.subnet.id
+        - name: pubSub2ID
+          value: pubSub2out.subnet.id
+        - name: pubSub3ID
+          value: pubSub3out.subnet.id
+        - name: privSub1ID
+          value: privSub1out.subnet.id
+        - name: privSub2ID
+          value: privSub2out.subnet.id
+        - name: privSub3ID
+          value: privSub3out.subnet.id
+        - name: igwID
+          value: igw.gateway_id
+        - name: publicRouteTableID
+          value: public_route_table.route_table.id
+        - name: natGatewayID 
+          value: nat_gw_pubSub1.nat_gateway_id
+        - name: privateRouteTableID
+          value: private_route_table.route_table.id
+
+
