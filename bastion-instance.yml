@@ -20,6 +20,7 @@
       copy:
         content: '{{ keyout.key.private_key }}'
         dest: './keys/bastion_key.pem'
+        mode: 0600
       when: keyout.changed
 
     - name: Create Bastion Security group 
@@ -43,8 +44,9 @@
         vpc_subnet_id: '{{ pubSub2ID }}'
         instance_type: t2.micro
         security_group: '{{ bastion_sg_out.group_id }}'
-        network: { assign_public_ip: true }
-        image_id: '{{ bastion_ami }}'
+        network_interfaces: 
+          - assign_public_ip: true
+        image_id: '{{ ubuntu_ami }}'
         wait: yes
         exact_count: 1
         tags: 

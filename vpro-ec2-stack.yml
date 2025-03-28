@@ -5,10 +5,22 @@
   gather_facts: no
 
   tasks:
-    - name: Import VPC setup variables
-      include_vars: vars/vpc_setup.txt
-    
-    - name: Import VPC id variables 
+    - name: Import VPC output variables 
       include_vars: vars/id-vars.txt
-    
+
+    - name: Import Vpro setup variables
+      include_vars: vars/vpro_setup.txt
+
+    - name: Create Key Pair for vpro instance login
+      amazon.aws.ec2_key:
+        name: vpro_base_key 
+        region: '{{ region }}'
+      register: keyout
+
+    - name: Save Vpro base key
+      copy:
+        content: '{{ keyout.key.private_key }}'
+        dest: './keys/vpro_base_key.pem'
+        mode: 0600
+      when: keyout.changed
     

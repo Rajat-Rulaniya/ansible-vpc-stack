@@ -28,5 +28,5 @@ state: present
 
 ## Bastion Vars
 
-bastion_ami: "ami-084568db4383264d4"
+ubuntu_ami: "ami-084568db4383264d4"
 MYIP: '{{ lookup("file", "myIp.txt") }}'
