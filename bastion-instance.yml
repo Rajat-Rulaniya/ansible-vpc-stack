@@ -20,7 +20,6 @@
       copy:
         content: '{{ keyout.key.private_key }}'
         dest: './keys/bastion_key.pem'
-        create: true
       when: keyout.changed
 
     - name: Create Bastion Security group 
