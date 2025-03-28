@@ -43,18 +43,17 @@
         vpc_subnet_id: '{{ pubSub2ID }}'
         instance_type: t2.micro
         security_group: '{{ bastion_sg_out.group_id }}'
-        network_interfaces:
-          - assign_public_ip: true
+        network: { assign_public_ip: true }
         image_id: '{{ bastion_ami }}'
         wait: yes
-        instance_tags: 
-          Name: "Bastion Host"
-          Project: vpro
-          Owner: Rajat Rulaniya
         exact_count: 1
-        count_tag:
+        tags: 
           Name: "Bastion Host"
           Project: vpro
           Owner: Rajat Rulaniya
+        filters:
+          "tag:Name": "Bastion Host"
+          "tag:Project": "vpro"
+          "tag:Owner": "Rajat Rulaniya"
 
       register: bastionHost_out 
