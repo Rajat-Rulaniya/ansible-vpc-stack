@@ -39,7 +39,7 @@
 
     - name: Create Bastion instance
       amazon.aws.ec2_instance:
-        key_name: '{{ keyout.key.private_key }}'
+        key_name: '{{ keyout.key.name}}'
         region: '{{ region }}'
         vpc_subnet_id: '{{ pubSub2ID }}'
         instance_type: t2.micro
