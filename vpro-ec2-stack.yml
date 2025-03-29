@@ -23,4 +23,255 @@
         dest: './keys/vpro_base_key.pem'
         mode: 0600
       when: keyout.changed
+
+    - name: Security group for Load Balancer
+      amazon.aws.ec2_security_group:
+        name: vpro_ELB_sg
+        description: allow all HTTP traffic to ELB 
+        region: '{{ region }}'
+        vpc_id: '{{ vpcID }}'
+        rules: 
+          - proto: tcp
+            ports:
+              - 80
+            cidr_ip: 0.0.0.0/0
+      register: elb_sg_out
+
+    - name: Security group for all Vpro EC2 
+      amazon.aws.ec2_security_group:
+        name: vpro_base_sg
+        description: allow internal communication and ssh from bastion
+        region: '{{ region }}'
+        vpc_id: '{{ vpcID }}'
+        purge_rules: no
+        rules: 
+          - proto: tcp
+            ports:
+              - 22
+            group_name: '{{ bastion_sg }}'
+      register: base_sg_out
+  
+    - name: Update base SG to allow traffic from itself
+      amazon.aws.ec2_security_group:
+        region: '{{ region }}'
+        vpc_id: '{{ vpcID }}'
+        group_id: '{{ base_sg_out.group_id }}'
+        purge_rules: no
+        rules: 
+          - proto: -1
+            group_id: '{{ base_sg_out.group_id }}'
+
+    - name: Security group for Nginx Instance 
+      amazon.aws.ec2_security_group:
+        name: vpro_web_sg
+        description: allow HTTP traffic only from ELB
+        vpc_id: '{{ vpcID }}'
+        purge_rules: no
+        rules: 
+          - proto: tcp
+            ports:
+              - 80
+            group_id: '{{ elb_sg_out.group_id }}'
+      register: web_sg_out
+
+    ## each ec2 will have 2 sg , 1 as base and 1 as individual, the base one will allow internal traffic and ssh from bastion host.
+
+    - name: Creating Nginx Instance web01
+      amazon.aws.ec2_instance:
+        key_name: '{{ keyout.key.name }}'
+        vpc_subnet_id: '{{ privSub1ID }}'
+        region: '{{ region }}'
+        instance_type: t2.micro
+        image_id: '{{ base_ami }}'
+        security_groups: ['{{ web_sg_out.group_id }}', '{{ base_sg_out.group_id }}']
+        wait: yes
+        exact_count: 1
+        tags:
+          Name: web01
+          Project: vpro 
+          Owner: Rajat Rulaniya
+        filters:
+          "tag:Name": "web01"
+          "tag:Project": "vpro"
+          "tag:Owner": "Rajat Rulaniya"
+      register: web01_out
+      
+    - name: Create Application instance app01
+      amazon.aws.ec2_instance:
+        key_name: '{{ keyout.key.name }}'
+        vpc_subnet_id: '{{ privSub1ID }}'
+        region: '{{ region }}'
+        instance_type: t2.micro
+        image_id: '{{ base_ami }}'
+        security_groups: ['{{ base_sg_out.group_id }}'] 
+        wait: yes
+        exact_count: 1
+        tags:
+          Name: app01 
+          Project: vpro 
+          Owner: Rajat Rulaniya
+        filters:
+          "tag:Name": "app01"
+          "tag:Project": "vpro"
+          "tag:Owner": "Rajat Rulaniya"
+      register: app01_out 
+
+    - name: Create Database instance db01
+      amazon.aws.ec2_instance:
+        key_name: '{{ keyout.key.name }}'
+        vpc_subnet_id: '{{ privSub1ID }}'
+        region: '{{ region }}'
+        instance_type: t2.micro
+        image_id: '{{ base_ami }}'
+        security_groups: ['{{ base_sg_out.group_id }}']
+        wait: yes
+        exact_count: 1
+        tags:
+          Name: db01
+          Project: vpro 
+          Owner: Rajat Rulaniya
+        filters:
+          "tag:Name": "db01"
+          "tag:Project": "vpro"
+          "tag:Owner": "Rajat Rulaniya"
+      register: db01_out
+
+    - name: Create Memcache instance mc01 
+      amazon.aws.ec2_instance:
+        key_name: '{{ keyout.key.name }}'
+        vpc_subnet_id: '{{ privSub1ID }}'
+        region: '{{ region }}'
+        instance_type: t2.micro
+        image_id: '{{ base_ami }}'
+        security_groups: ['{{ base_sg_out.group_id }}']
+        wait: yes
+        exact_count: 1
+        tags:
+          Name: mc01 # 
+          Project: vpro 
+          Owner: Rajat Rulaniya
+        filters:
+          "tag:Name": "mc01"
+          "tag:Project": "vpro"
+          "tag:Owner": "Rajat Rulaniya"
+      register: mc01_out 
+    
+    - name: Create RabbitMQ instance rmq01 
+      amazon.aws.ec2_instance:
+        key_name: '{{ keyout.key.name }}'
+        vpc_subnet_id: '{{ privSub1ID }}'
+        region: '{{ region }}'
+        instance_type: t2.micro
+        image_id: '{{ base_ami }}'
+        security_groups: ['{{ base_sg_out.group_id }}']
+        wait: yes
+        exact_count: 1
+        tags:
+          Name: rmq01 
+          Project: vpro 
+          Owner: Rajat Rulaniya
+        filters:
+          "tag:Name": "rmq01"
+          "tag:Project": "vpro"
+          "tag:Owner": "Rajat Rulaniya"
+      register: rmq01_out
+
+    - name: Create target group for elb 
+      community.aws.elb_target_group:
+        name: vpro-tg
+        protocol: http
+        port: 81
+        vpc_id: '{{ vpcID }}'
+        state: present
+        targets:
+          - Id: '{{ web01_out.instance_ids[0] }}'
+            Port: 80
+
+    - name: Create Load Balancer
+      amazon.aws.elb_application_lb:
+        name: vpro-elb
+        security_groups:
+          - '{{ elb_sg_out.group_id }}'
+        subnets:
+          - '{{ pubSub1ID }}'
+          - '{{ pubSub2ID }}'
+          - '{{ pubSub3ID }}'
+        listeners:
+          - Protocol: HTTP
+            Port: 80
+            DefaultActions:
+              - Type: forward
+                TargetGroupName: vpro-tg
+        state: present
+
+    - name: Provision-Stack directory
+      file:
+        path: ./provision-stack/group_vars
+        state: directory 
+        mode: 0700
+
+    - name: Save Host IP Addresses
+      lineinfile:
+        line: '{{ item.name }}: {{ hostvars[item.host + "_out"].instances[0].network_interfaces[0].private_ip_address}}'
+        path: './provision-stack/group_vars/hostsip.txt'
+        regexp: "^{{ item.name }}:"
+        create: true
+      
+      loop:
+        - name: NginxIP
+          host: web01
+        - name: AppIP
+          host: app01
+        - name: DatabaseIP
+          host: db01
+        - name: MemcacheIP
+          host: mc01
+        - name: RabbitmqIP
+          host: rmq01
+
+    - name: Insert/Update hosts in inventory file 
+      lineinfile:
+        line: '{{ item.name }} ansible_host={{ hostvars[item.name + "_out"].instances[0].network_interfaces[0].private_ip_address}}'
+        path: './provision-stack/inventory-vpro'
+        regexp: "^{{ item.name }}"
+        create: true
+      loop:
+        - name: web01
+        - name: app01
+        - name: db01
+        - name: mc01
+        - name: rmq01
+
+    - name: Insert/Update groups in inventory file
+      blockinfile:
+        path: './provision-stack/inventory-vpro'
+        block: |
+          [websrvgrp]
+          web01
+
+          [appsrvgrp]
+          app01
+
+          [dbsrvgrp]
+          db01
+
+          [mcsrvgrp]
+          mc01
+
+          [rmqsrvgrp]
+          rmq01
+
+          [stack_inst:children]
+          websrvgrp
+          appsrvgrp
+          dbsrvgrp
+          mcsrvgrp
+          rmqsrvgrp
+
+          [stack_inst:vars]
+          ansible_user=ubuntu
+          ansible_user_private_key_file=keys/vpro_base_key.pem
+
+
+
     

@@ -7,6 +7,12 @@
     - name: Import VPC variables
       include_vars: vars/vpc_setup.txt
 
+    - name: vars directory
+      file: 
+        path: './vars'
+        state: directory
+        mode: 0700
+
     - name: Create Vprofile VPC
       amazon.aws.ec2_vpc_net:
         name: "{{ vpc_name }}"

@@ -10,6 +10,12 @@
     - name: Import VPC variables
       include_vars: vars/id-vars.txt
 
+    - name: keys directory
+      file: 
+        path: './keys'
+        state: directory
+        mode: 0700
+
     - name: Create Bastion key 
       amazon.aws.ec2_key:
         name: bastion_key 
@@ -23,6 +29,9 @@
         mode: 0600
       when: keyout.changed
 
+    - name: Fetch my public IP
+      community.general.ipify_facts:
+
     - name: Create Bastion Security group 
       amazon.aws.ec2_security_group:
         name: "bastion_sg"
@@ -33,13 +42,13 @@
           - proto: tcp
             ports:
               - 22
-            cidr_ip: '{{ MYIP }}'
+            cidr_ip: '{{ ansible_facts.ipify_public_ip }}/32'
             rule_desc: allow ssh only from my IP
       register: bastion_sg_out
 
     - name: Create Bastion instance
       amazon.aws.ec2_instance:
-        key_name: '{{ keyout.key.name}}'
+        key_name: '{{ keyout.key.name }}'
         region: '{{ region }}'
         vpc_subnet_id: '{{ pubSub2ID }}'
         instance_type: t2.micro
