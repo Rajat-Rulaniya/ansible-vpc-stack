@@ -216,7 +216,7 @@
 
     - name: Save Host IP Addresses
       lineinfile:
-        line: '{{ item.name }}: {{ lookup("vars", item.host).network_interfaces[0].private_ip_address}}'
+        line: '{{ item.name }}: {{ lookup("vars", item.host).instances[0].private_ip_address}}'
         path: './provision-stack/group_vars/hostsip.txt'
         regexp: "^{{ item.name }}:"
         create: true
@@ -235,7 +235,7 @@
 
     - name: Insert/Update hosts in inventory file 
       lineinfile:
-        line: '{{ item.name }} ansible_host={{ lookup("vars", item.name).instances[0].network_interfaces[0].private_ip_address}}'
+        line: '{{ item.name }} ansible_host={{ lookup("vars", item.name).instances[0].private_ip_address}}'
         path: './provision-stack/inventory-vpro'
         regexp: "^{{ item.name }}"
         create: true
