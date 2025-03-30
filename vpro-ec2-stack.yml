@@ -222,15 +222,15 @@
         create: true
       
       loop:
-        - name: NginxIP
+        - name: Nginx
           host: web01
-        - name: AppIP
+        - name: App
           host: app01
-        - name: DatabaseIP
+        - name: Database
           host: db01
-        - name: MemcacheIP
+        - name: Memcache
           host: mc01
-        - name: RabbitmqIP
+        - name: Rabbitmq
           host: rmq01
 
     - name: Insert/Update hosts in inventory file 
