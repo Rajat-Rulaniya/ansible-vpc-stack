@@ -193,6 +193,7 @@
     - name: Create Load Balancer
       amazon.aws.elb_application_lb:
         name: vpro-elb
+        region: '{{ region }}'
         security_groups:
           - '{{ elb_sg_out.group_id }}'
         subnets:
