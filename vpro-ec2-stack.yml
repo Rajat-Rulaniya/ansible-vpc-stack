@@ -96,7 +96,7 @@
           "tag:Name": "web01"
           "tag:Project": "vpro"
           "tag:Owner": "Rajat Rulaniya"
-      register: web01_out
+      register: web01
       
     - name: Create Application instance app01
       amazon.aws.ec2_instance:
@@ -116,7 +116,7 @@
           "tag:Name": "app01"
           "tag:Project": "vpro"
           "tag:Owner": "Rajat Rulaniya"
-      register: app01_out 
+      register: app01
 
     - name: Create Database instance db01
       amazon.aws.ec2_instance:
@@ -136,7 +136,7 @@
           "tag:Name": "db01"
           "tag:Project": "vpro"
           "tag:Owner": "Rajat Rulaniya"
-      register: db01_out
+      register: db01
 
     - name: Create Memcache instance mc01 
       amazon.aws.ec2_instance:
@@ -156,7 +156,7 @@
           "tag:Name": "mc01"
           "tag:Project": "vpro"
           "tag:Owner": "Rajat Rulaniya"
-      register: mc01_out 
+      register: mc01
     
     - name: Create RabbitMQ instance rmq01 
       amazon.aws.ec2_instance:
@@ -176,7 +176,7 @@
           "tag:Name": "rmq01"
           "tag:Project": "vpro"
           "tag:Owner": "Rajat Rulaniya"
-      register: rmq01_out
+      register: rmq01
 
     - name: Create target group for elb 
       community.aws.elb_target_group:
@@ -187,7 +187,7 @@
         vpc_id: '{{ vpcID }}'
         state: present
         targets:
-          - Id: '{{ web01_out.instance_ids[0] }}'
+          - Id: '{{ web01.instance_ids[0] }}'
             Port: 80
 
     - name: Create Load Balancer
@@ -216,7 +216,7 @@
 
     - name: Save Host IP Addresses
       lineinfile:
-        line: '{{ item.name }}: {{ hostvars[item.host + "_out"].instances[0].network_interfaces[0].private_ip_address}}'
+        line: '{{ item.name }}: {{ item.host.instances[0].network_interfaces[0].private_ip_address}}'
         path: './provision-stack/group_vars/hostsip.txt'
         regexp: "^{{ item.name }}:"
         create: true
@@ -235,7 +235,7 @@
 
     - name: Insert/Update hosts in inventory file 
       lineinfile:
-        line: '{{ item.name }} ansible_host={{ hostvars[item.name + "_out"].instances[0].network_interfaces[0].private_ip_address}}'
+        line: '{{ item.name }} ansible_host={{ item.name.instances[0].network_interfaces[0].private_ip_address}}'
         path: './provision-stack/inventory-vpro'
         regexp: "^{{ item.name }}"
         create: true
