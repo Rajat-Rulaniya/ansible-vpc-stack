@@ -2,3 +2,5 @@
 steps*
 temp*
 *.pem
+*.sql
+*.war

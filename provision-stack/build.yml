@@ -2,6 +2,7 @@
 - name: Generate artifact, copy artifact & sql file to files directory
   hosts: localhost
   connection: local
+  become: yes
   tasks:
     - name: Install JDK, maven, git
       apt:

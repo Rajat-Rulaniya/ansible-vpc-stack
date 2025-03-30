@@ -1,14 +1,18 @@
 ---
 - name: Set Hosts to IP mapping in /etc/hosts/ file of all servers
   hosts: all
+  become: yes
   tasks:
     - name: Importing private IP addresses of all hosts
       include_vars: group_vars/hostsip.txt
+      register: host_ips
 
-    - name: Update /etc/hosts file
-      blockinfile:
+    - name: Updating /etc/hosts file
+      lineinfile:
+        line: "{{item.value}} {{ item.key }}"
         path: /etc/hosts
-        block: |
-          {% for item in hostsip | dict2items %}
-          {{ item.value }} {{ item.key }}
-          {% endfor %}
+        regexp: "^{{ item.value }}"
+  
+      loop: '{{ host_ips.ansible_facts | dict2items }}'
+
+      

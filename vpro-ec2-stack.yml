@@ -216,7 +216,7 @@
 
     - name: Save Host IP Addresses
       lineinfile:
-        line: '{{ item.name }}: {{ lookup("vars", item.host).instances[0].private_ip_address}}'
+        line: '{{ item.host }}: {{ lookup("vars", item.host).instances[0].private_ip_address}} # {{ item.name }} instance'
         path: './provision-stack/group_vars/hostsip.txt'
         regexp: "^{{ item.name }}:"
         create: true

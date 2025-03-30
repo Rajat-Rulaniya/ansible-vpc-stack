@@ -1,0 +1,46 @@
+---
+- name: Setup dbserver
+  hosts: dbsrvgrp
+  become: yes
+  tasks:
+    - name: Install MySQL
+      package:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop:
+        - mysql-server
+        - mysql-client
+        - python-mysqldb
+        - python3-mysqldb
+        - libmysqlclient-dev
+    
+    - name: Start & Enable mysql service
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: creating mysql user
+      mysql_user:
+        name: '{{ lookup("env", "dbuser") }}'
+        password: '{{ lookup("env", "dbpass") }}'
+        priv: '*.*:ALL'
+        host: '%'
+        state: present
+
+    - name: Create accounts DB
+      mysql_db:
+        name: '{{ lookup("env", "dbname") }}'
+        state: present
+      
+    - name: Enable remote login to mysql svc
+      lineinfile:
+        line: 'bind-address = 0.0.0.0'
+        path: /etc/mysql/mysql.conf.d/mysql.cnf
+        regexp: '^bind-address'
+      
+    - name: Restart mysql
+      service:
+        name: mysql
+        state: restarted
