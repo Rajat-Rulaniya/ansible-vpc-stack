@@ -48,14 +48,15 @@
           - proto: tcp
             ports:
               - 22
-            group_name: '{{ bastion_sg }}'
+            group_name: 'bastion_sg'
       register: base_sg_out
   
     - name: Update base SG to allow traffic from itself
       amazon.aws.ec2_security_group:
+        name: vpro_base_sg
+        description: allow internal communication and ssh from bastion
         region: '{{ region }}'
         vpc_id: '{{ vpcID }}'
-        group_id: '{{ base_sg_out.group_id }}'
         purge_rules: no
         rules: 
           - proto: -1
@@ -66,6 +67,7 @@
         name: vpro_web_sg
         description: allow HTTP traffic only from ELB
         vpc_id: '{{ vpcID }}'
+        region: '{{ region }}'
         purge_rules: no
         rules: 
           - proto: tcp
