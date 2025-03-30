@@ -182,6 +182,7 @@
       community.aws.elb_target_group:
         name: vpro-tg
         protocol: http
+        region: '{{ region }}'
         port: 81
         vpc_id: '{{ vpcID }}'
         state: present
