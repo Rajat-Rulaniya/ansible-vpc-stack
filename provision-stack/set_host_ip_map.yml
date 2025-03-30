@@ -1,0 +1,14 @@
+---
+- name: Set Hosts to IP mapping in /etc/hosts/ file of all servers
+  hosts: all
+  tasks:
+    - name: Importing private IP addresses of all hosts
+      include_vars: group_vars/hostsip.txt
+
+    - name: Update /etc/hosts file
+      blockinfile:
+        path: /etc/hosts
+        block: |
+          {% for item in hostsip | dict2items %}
+          {{ item.value }} {{ item.key }}
+          {% endfor %}

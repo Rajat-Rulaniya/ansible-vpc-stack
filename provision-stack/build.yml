@@ -1,0 +1,50 @@
+---
+- name: Generate artifact, copy artifact & sql file to files directory
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Install JDK, maven, git
+      apt:
+        name: '{{ item }}'
+        state: present
+        update_cache: yes
+      loop:
+        - openjdk-8-jdk
+        - git
+        - maven
+
+    - name: Clone source code from github
+      git:
+        repo: 'https://github.com/devopshydclub/vprofile-project.git'
+        dest: ./vpro-repo
+        version: vp-rem
+      register: git_status
+
+    - name: Maven install
+      command: "mvn install"
+      args:
+        chdir: ./vpro-repo
+      when: git_status.changed
+
+    - name: Files directory
+      file:
+        name: files
+        state: directory
+        mode: 0700
+
+    - name: Copy Artifact to files directory
+      copy:
+        src: '{{ item }}'
+        dest: files/ROOT.war
+      with_fileglob: vpro-repo/target/*.war
+
+    - name: Copy SQL file to files directory
+      copy:
+        src: vpro-repo/src/main/resources/db_backup.sql
+        dest: files/db_backup.sql
+
+    
+
+    
+
+    
