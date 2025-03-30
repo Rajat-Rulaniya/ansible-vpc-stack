@@ -66,8 +66,8 @@
       amazon.aws.ec2_security_group:
         name: vpro_web_sg
         description: allow HTTP traffic only from ELB
-        vpc_id: '{{ vpcID }}'
         region: '{{ region }}'
+        vpc_id: '{{ vpcID }}'
         purge_rules: no
         rules: 
           - proto: tcp
