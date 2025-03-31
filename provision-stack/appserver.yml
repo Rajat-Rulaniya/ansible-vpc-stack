@@ -46,7 +46,6 @@
       synchronize: 
         src: "/tmp/tomcat8/{{ unarchive_info.files[0].split('/')[0] }}"
         dest: /usr/local/tomcat8/
-        remote_src: yes
 
       delegate_to: '{{ inventory_hostname }}'
     
