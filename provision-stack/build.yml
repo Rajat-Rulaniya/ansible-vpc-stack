@@ -31,7 +31,7 @@
       file:
         name: files
         state: directory
-        mode: 0700
+        mode: 0777
 
     - name: Copy Artifact to files directory
       copy:
