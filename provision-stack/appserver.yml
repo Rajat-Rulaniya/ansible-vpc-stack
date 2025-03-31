@@ -103,6 +103,7 @@
           shell: cp -r ROOT old_ROOT
           args:
             chdir: /usr/local/tomcat8/webapps/
+          when: artifact_stat.stat.exists
 
         - name: Delete current artifact
           file:
