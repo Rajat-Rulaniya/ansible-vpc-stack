@@ -196,7 +196,7 @@
 
     - name: Simple PUT operation
       amazon.aws.s3_object:
-        bucket: mybucket
+        bucket: rajat-ansible-vpc-storage
         object: ansible/id-vars.txt
         src: './vars/id-vars.txt'
         mode: put 
