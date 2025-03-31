@@ -214,6 +214,20 @@
         state: directory 
         mode: 0700
 
+    - debug: 
+        msg: '{{ lookup("vars", item.host).instances[0].private_ip_address }}'
+      loop:
+        - name: Nginx
+          host: web01
+        - name: App
+          host: app01
+        - name: Database
+          host: db01
+        - name: Memcache
+          host: mc01
+        - name: Rabbitmq
+          host: rmq01
+
     - name: Save Host IP Addresses
       lineinfile:
         line: '{{ item.host }}: {{ lookup("vars", item.host).instances[0].private_ip_address}} # {{ item.name }} instance'
