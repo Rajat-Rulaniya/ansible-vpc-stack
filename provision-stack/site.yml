@@ -14,8 +14,8 @@
 - name: Setup Memcached
   import_playbook: memcache.yml
 
-- name: Setup RabbitMQ
-  import_playbook: rabbitmq.yml
+# - name: Setup RabbitMQ
+#   import_playbook: rabbitmq.yml
 
 - name: Setup Tomcat Application server
   import_playbook: appserver.yml
