@@ -33,7 +33,7 @@
     - name: Save Vpro base key
       copy:
         content: '{{ keyout.key.private_key }}'
-        dest: './keys/vpro_base_key.pem'
+        dest: './provision-stack/keys/vpro_base_key.pem'
         mode: 0600
       when: keyout.changed
 
