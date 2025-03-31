@@ -37,12 +37,14 @@
       copy:
         src: '{{ item }}'
         dest: files/ROOT.war
+        mode: 0777
       with_fileglob: vpro-repo/target/*.war
 
     - name: Copy SQL file to files directory
       copy:
         src: vpro-repo/src/main/resources/db_backup.sql
         dest: files/db_backup.sql
+        mode: 0777
 
     
 

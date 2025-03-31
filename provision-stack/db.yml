@@ -20,11 +20,6 @@
         state: started
         enabled: yes
 
-    - name: Debug dbname
-      debug:
-        msg: "Database name is {{ lookup('env', 'dbname') }}. User {{ lookup('env', 'dbuser') }}"
-
-
     - name: creating mysql user
       mysql_user:
         name: '{{ lookup("env", "dbuser") }}'
