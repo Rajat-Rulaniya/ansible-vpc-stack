@@ -1,6 +1,6 @@
 .vscode
 steps*
-temp*
+temp
 *.pem
 *.sql
 *.war
