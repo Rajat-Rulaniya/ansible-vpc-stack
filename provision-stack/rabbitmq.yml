@@ -7,7 +7,7 @@
       apt:
         name: ['curl', 'gnupg', 'apt-transport-https']
         state: present
-        update_cache: yes
+        update_cache: no
 
     - name: Create keyrings directory
       file:
