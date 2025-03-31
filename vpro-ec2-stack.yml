@@ -287,5 +287,5 @@
       amazon.aws.s3_object:
         bucket: rajat-ansible-vpc-storage
         object: /ansible/inventory-vpro
-        src: /provision-stack/inventory-vpro
+        src: ./provision-stack/inventory-vpro
         mode: put
