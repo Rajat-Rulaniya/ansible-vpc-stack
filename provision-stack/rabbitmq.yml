@@ -1,99 +1,99 @@
----
-- name: Setup RabbitMQ
-  hosts: rmqsrvgrp
-  become: yes
-  tasks:
-    - name: Install dependencies
-      apt:
-        name: ['curl', 'gnupg', 'apt-transport-https']
-        state: present
-        update_cache: no
+# ---
+# - name: Setup RabbitMQ
+#   hosts: rmqsrvgrp
+#   become: yes
+#   tasks:
+#     - name: Install dependencies
+#       apt:
+#         name: ['curl', 'gnupg', 'apt-transport-https']
+#         state: present
+#         update_cache: no
 
-    - name: Create keyrings directory
-      file:
-        path: /usr/share/keyrings
-        state: directory
-        mode: '0755'
+#     - name: Create keyrings directory
+#       file:
+#         path: /usr/share/keyrings
+#         state: directory
+#         mode: '0755'
 
-    - name: Download and add RabbitMQ & Erlang GPG keys
-      get_url:
-        url: "{{ item.url }}"
-        dest: "/usr/share/keyrings/{{ item.dest }}"
-        mode: '0644'
-      loop:
-        - { url: "https://keys.openpgp.org/vks/v1/by-fingerprint/0A9AF2115F4687BD29803A206B73A36E6026DFCA", dest: "rabbitmq-signing-key.gpg" }
-        - { url: "https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key", dest: "rabbitmq-erlang-key.gpg" }
-        - { url: "https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key", dest: "rabbitmq-server-key.gpg" }
+#     - name: Download and add RabbitMQ & Erlang GPG keys
+#       get_url:
+#         url: "{{ item.url }}"
+#         dest: "/usr/share/keyrings/{{ item.dest }}"
+#         mode: '0644'
+#       loop:
+#         - { url: "https://keys.openpgp.org/vks/v1/by-fingerprint/0A9AF2115F4687BD29803A206B73A36E6026DFCA", dest: "rabbitmq-signing-key.gpg" }
+#         - { url: "https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key", dest: "rabbitmq-erlang-key.gpg" }
+#         - { url: "https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key", dest: "rabbitmq-server-key.gpg" }
 
 
-    - name: Add RabbitMQ repositories
-      apt_repository:
-        repo: '{{ item }}'
-        state: present
+#     - name: Add RabbitMQ repositories
+#       apt_repository:
+#         repo: '{{ item }}'
+#         state: present
 
-      loop:
-        - "deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa1.rabbitmq.com/rabbitmq/rabbitmq-erlang/deb/ubuntu noble main"
-        - "deb-src [signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa1.rabbitmq.com/rabbitmq/rabbitmq-erlang/deb/ubuntu noble main"
-        - "deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa2.rabbitmq.com/rabbitmq/rabbitmq-erlang/deb/ubuntu noble main"
-        - "deb-src [signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa2.rabbitmq.com/rabbitmq/rabbitmq-erlang/deb/ubuntu noble main"
-        - "deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa1.rabbitmq.com/rabbitmq/rabbitmq-server/deb/ubuntu noble main"
-        - "deb-src [signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa1.rabbitmq.com/rabbitmq/rabbitmq-server/deb/ubuntu noble main"
-        - "deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa2.rabbitmq.com/rabbitmq/rabbitmq-server/deb/ubuntu noble main"
-        - "deb-src [signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa2.rabbitmq.com/rabbitmq/rabbitmq-server/deb/ubuntu noble main"
+#       loop:
+#         - "deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa1.rabbitmq.com/rabbitmq/rabbitmq-erlang/deb/ubuntu noble main"
+#         - "deb-src [signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa1.rabbitmq.com/rabbitmq/rabbitmq-erlang/deb/ubuntu noble main"
+#         - "deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa2.rabbitmq.com/rabbitmq/rabbitmq-erlang/deb/ubuntu noble main"
+#         - "deb-src [signed-by=/usr/share/keyrings/rabbitmq.E495BB49CC4BBE5B.gpg] https://ppa2.rabbitmq.com/rabbitmq/rabbitmq-erlang/deb/ubuntu noble main"
+#         - "deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa1.rabbitmq.com/rabbitmq/rabbitmq-server/deb/ubuntu noble main"
+#         - "deb-src [signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa1.rabbitmq.com/rabbitmq/rabbitmq-server/deb/ubuntu noble main"
+#         - "deb [arch=amd64 signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa2.rabbitmq.com/rabbitmq/rabbitmq-server/deb/ubuntu noble main"
+#         - "deb-src [signed-by=/usr/share/keyrings/rabbitmq.9F4587F226208342.gpg] https://ppa2.rabbitmq.com/rabbitmq/rabbitmq-server/deb/ubuntu noble main"
 
-    - name: Install Erlang & RabbitMQ
-      apt:
-        name: '{{ item }}'
-        state: present
-        update_cache: yes
+#     - name: Install Erlang & RabbitMQ
+#       apt:
+#         name: '{{ item }}'
+#         state: present
+#         update_cache: yes
       
-      loop:
-        - erlang-base
-        - erlang-asn1
-        - erlang-crypto
-        - erlang-eldap
-        - erlang-ftp
-        - erlang-inets
-        - erlang-mnesia
-        - erlang-os-mon
-        - erlang-parsetools
-        - erlang-public-key
-        - erlang-runtime-tools
-        - erlang-snmp
-        - erlang-ssl
-        - erlang-syntax-tools
-        - erlang-tftp
-        - erlang-tools
-        - erlang-xmerl
-        - rabbitmq-server
+#       loop:
+#         - erlang-base
+#         - erlang-asn1
+#         - erlang-crypto
+#         - erlang-eldap
+#         - erlang-ftp
+#         - erlang-inets
+#         - erlang-mnesia
+#         - erlang-os-mon
+#         - erlang-parsetools
+#         - erlang-public-key
+#         - erlang-runtime-tools
+#         - erlang-snmp
+#         - erlang-ssl
+#         - erlang-syntax-tools
+#         - erlang-tftp
+#         - erlang-tools
+#         - erlang-xmerl
+#         - rabbitmq-server
 
-    - name: Enable & Start RabbitMQ server
-      service: 
-        name: rabbitmq-server
-        state: started 
-        enabled: yes
+#     - name: Enable & Start RabbitMQ server
+#       service: 
+#         name: rabbitmq-server
+#         state: started 
+#         enabled: yes
 
-    - name: Config Setup
-      copy:
-        content: |
-          [{rabbit, [{loopback_users, []}]}].
-        dest: /etc/rabbitmq/rabbitmq.config
+#     - name: Config Setup
+#       copy:
+#         content: |
+#           [{rabbit, [{loopback_users, []}]}].
+#         dest: /etc/rabbitmq/rabbitmq.config
 
-    - rabbitmq_user: 
-        user: test
-        password: test
-        configure_priv: .*
-        read_priv: .*
-        write_priv: .*
-        tags: administrator
-        state: present
+#     - rabbitmq_user: 
+#         user: test
+#         password: test
+#         configure_priv: .*
+#         read_priv: .*
+#         write_priv: .*
+#         tags: administrator
+#         state: present
 
-    - name: Enables rabbitmq_management plugin
-      rabbitmq_plugin:
-        name: rabbitmq_management
-        state: enabled 
+#     - name: Enables rabbitmq_management plugin
+#       rabbitmq_plugin:
+#         name: rabbitmq_management
+#         state: enabled 
       
-    - name: Restart RabbitMQ
-      service:
-        name: rabbitmq-server
-        state: restarted 
+#     - name: Restart RabbitMQ
+#       service:
+#         name: rabbitmq-server
+#         state: restarted 
