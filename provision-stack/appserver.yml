@@ -55,6 +55,14 @@
         owner: tomcat
         group: tomcat
         recurse: yes
+    
+    - name: Ensure webapps directory exists
+      file:
+        path: /usr/local/tomcat8/webapps
+        state: directory
+        owner: tomcat
+        group: tomcat
+
 
     - name: Setup tomcat SVC file
       template:
@@ -131,7 +139,7 @@
       service:
         name: tomcat8
         state: started
-      when: deploy_info.changed
+      when: deploy_info is defined and deploy_info.changed
       tags:
         - deploy
 
