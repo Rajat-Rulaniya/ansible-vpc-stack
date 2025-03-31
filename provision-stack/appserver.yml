@@ -42,9 +42,9 @@
 
       register: unarchive_info
     
-    - name: Sync /tmp/tomcat8/tomcat_cont /usr/local/tomcat8
+    - name: Copy /tmp/tomcat8/tomcat_cont /usr/local/tomcat8
       copy: 
-        src: "/tmp/tomcat8/{{ unarchive_info.files[0].split('/')[0] }}/*"
+        src: "/tmp/tomcat8/{{ unarchive_info.files[0].split('/')[0] }}/"
         dest: /usr/local/tomcat8/
 
       delegate_to: '{{ inventory_hostname }}'
