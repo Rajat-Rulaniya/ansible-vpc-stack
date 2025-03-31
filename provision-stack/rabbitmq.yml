@@ -5,13 +5,9 @@
   tasks:
     - name: Install dependencies
       apt:
-        name: '{{ item }}'
+        name: ['curl', 'gnupg', 'apt-transport-https']
         state: present
         update_cache: yes
-      loop:
-        - curl
-        - gnupg
-        - apt-transport-https
 
     - name: Create keyrings directory
       file:
