@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  connection: local
+  become: yes
+
+  tasks:
+    - name: Get Inventory file
+      amazon.aws.s3_object:
+        bucket: rajat-ansible-vpc-storage
+        object: /ansible/inventory-vpro
+        dest: ./inventory-vpro
+        mode: get

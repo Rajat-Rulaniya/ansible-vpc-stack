@@ -86,8 +86,8 @@
 
     - name: Enables rabbitmq_management plugin
       rabbitmq_plugin:
-        - name: rabbitmq_management
-          state: enabled 
+        name: rabbitmq_management
+        state: enabled 
       
     - name: Restart RabbitMQ
       service:

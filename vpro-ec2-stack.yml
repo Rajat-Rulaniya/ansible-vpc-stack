@@ -218,7 +218,7 @@
       lineinfile:
         line: '{{ item.host }}: {{ lookup("vars", item.host).instances[0].private_ip_address}} # {{ item.name }} instance'
         path: './provision-stack/group_vars/hostsip.txt'
-        regexp: "^{{ item.name }}:"
+        regexp: "^{{ item.host }}:"
         create: true
       
       loop:
@@ -278,4 +278,14 @@
 
 
 
-    
+    - name: Create Ansible VPC bucket
+      amazon.aws.s3_bucket:
+        name: rajat-ansible-vpc-storage
+        state: present
+
+    - name: PUT inventory file to S3
+      amazon.aws.s3_object:
+        bucket: rajat-ansible-vpc-storage
+        object: /ansible/inventory-vpro
+        src: /provision-stack/inventory-vpro
+        mode: put
