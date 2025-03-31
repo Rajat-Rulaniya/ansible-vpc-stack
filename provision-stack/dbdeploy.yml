@@ -5,7 +5,7 @@
   tasks:
     - name: Copy SQL to dbsrv
       copy:
-        src: files/db_backup.sql
+        src: ./files/db_backup.sql
         dest: /tmp/db_backup.sql
 
     - name: Restoring DB
