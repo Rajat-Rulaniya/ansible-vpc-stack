@@ -140,7 +140,6 @@
       service:
         name: tomcat8
         state: started
-      when: deploy_info is defined and deploy_info.changed
       tags:
         - deploy
 
