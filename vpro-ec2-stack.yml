@@ -301,4 +301,4 @@
 
           [stack_inst:vars]
           ansible_user=ubuntu
-          ansible_user_private_key_file=keys/vpro_base_key.pem
+          ansible_user_private_key_file=./keys/vpro_base_key.pem
