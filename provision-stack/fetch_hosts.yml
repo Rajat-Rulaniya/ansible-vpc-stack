@@ -10,3 +10,10 @@
         object: ansible/inventory-vpro
         dest: ./inventory-vpro
         mode: get
+
+    - name: Get Hosts file
+      amazon.aws.s3_object:
+        bucket: rajat-ansible-vpc-storage
+        object: ansible/hostsip.txt
+        dest: ./group_vars/hostsip.txt
+        mode: get

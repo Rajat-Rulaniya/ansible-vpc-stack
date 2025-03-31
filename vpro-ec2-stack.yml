@@ -289,3 +289,10 @@
         object: /ansible/inventory-vpro
         src: ./provision-stack/inventory-vpro
         mode: put
+
+    - name: PUT hostsfile to S3
+      amazon.aws.s3_object:
+        bucket: rajat-ansible-vpc-storage
+        object: ansible/hostsip.txt
+        src: './provision-stack/group_vars/hostsip.txt'
+        mode: put
