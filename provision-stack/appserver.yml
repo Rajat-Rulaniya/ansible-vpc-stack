@@ -31,8 +31,8 @@
         home: /usr/local/tomcat8
 
     - file:
-      path: /tmp/tomcat8
-      state: directory
+        path: /tmp/tomcat8
+        state: directory
   
     - unarchive: 
         src: /tmp/tomcat-8.tar.gz
