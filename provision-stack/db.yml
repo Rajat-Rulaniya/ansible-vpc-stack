@@ -11,7 +11,6 @@
       loop:
         - mysql-server
         - mysql-client
-        - python-mysqldb
         - python3-mysqldb
         - libmysqlclient-dev
     
