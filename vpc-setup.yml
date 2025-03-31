@@ -189,4 +189,14 @@
         - name: privateRouteTableID
           value: '{{private_route_table.route_table.id}}'
 
+    - name: Create Ansible VPC bucket
+      amazon.aws.s3_bucket:
+        name: rajat-ansible-vpc-storage
+        state: present
 
+    - name: Simple PUT operation
+      amazon.aws.s3_object:
+        bucket: mybucket
+        object: ansible/id-vars.txt
+        src: './vars/id-vars.txt'
+        mode: put 

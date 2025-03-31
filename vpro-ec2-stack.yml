@@ -5,6 +5,13 @@
   gather_facts: no
 
   tasks:
+    - name: Fetch id-vars from S3 
+      amazon.aws.s3_object:
+        bucket: rajat-ansible-vpc-storage
+        object: ansible/id-vars.txt
+        dest: './vars/id-vars.txt'
+        mode: get
+
     - name: Import VPC output variables 
       include_vars: vars/id-vars.txt
 
