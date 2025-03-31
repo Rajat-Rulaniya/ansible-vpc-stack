@@ -7,6 +7,6 @@
     - name: Get Inventory file
       amazon.aws.s3_object:
         bucket: rajat-ansible-vpc-storage
-        object: /ansible/inventory-vpro
+        object: ansible/inventory-vpro
         dest: ./inventory-vpro
         mode: get
