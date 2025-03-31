@@ -251,7 +251,7 @@
       lineinfile:
         line: '{{ item.name }} ansible_host={{ lookup("vars", item.name).instances[0].private_ip_address}}'
         path: './provision-stack/inventory-vpro'
-        regexp: "^{{ item.name }}"
+        regexp: "^{{ item.name }} ansible_host="
         create: true
       loop:
         - name: web01
